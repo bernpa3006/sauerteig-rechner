@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#3E2208">
+<title>Sauerteig Rechner</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #F5EDD8;
+  --card:     #FFFCF3;
+  --border:   #DDD0B0;
+  --brown:    #3E2208;
+  --amber:    #C07B2A;
+  --amber-lt: #E8B56A;
+  --amber-bg: #FFF4DF;
+  --green:    #2E5C38;
+  --green-bg: #E6F2E9;
+  --red:      #9B2318;
+  --red-bg:   #FDF0EE;
+  --text:     #2A1505;
+  --muted:    #8A6E52;
+  --shadow:   0 1px 8px rgba(60,30,0,0.10);
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Lora', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: calc(68px + var(--sab) + 8px);
+}
+
+/* HEADER */
+header {
+  background: var(--brown);
+  color: #F6EDD9;
+  text-align: center;
+  padding: calc(var(--sat) + 0.9rem) 1rem 0.9rem;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+.hdr { display:flex; align-items:center; justify-content:center; gap:0.55rem; }
+.hdr-icon { font-size:1.5rem; line-height:1; }
+header h1 { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; }
+header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-top:0.15rem; }
+
+/* BOTTOM NAV */
+.bnav {
+  position:fixed; bottom:0; left:0; right:0;
+  height: calc(60px + var(--sab));
+  background: var(--brown);
+  display:flex; z-index:200;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.2);
+}
+.bnav-btn {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:0.15rem; padding-bottom:var(--sab);
+  border:none; background:transparent;
+  color:rgba(246,237,217,0.45);
+  font-family:'Lora',serif; font-size:0.65rem;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  transition:color 0.15s;
+}
+.bnav-btn .bi { font-size:1.4rem; line-height:1; }
+.bnav-btn.active { color:var(--amber-lt); }
+
+/* TABS */
+.tc { display:none; }
+.tc.active { display:block; }
+
+/* PAGE WRAPPER */
+.page { max-width:600px; margin:0 auto; padding:0.65rem 0.65rem 0; }
+
+/* CARD */
+.card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; padding:0.9rem 0.9rem;
+  margin-bottom:0.65rem; box-shadow:var(--shadow);
+}
+.ct {
+  font-family:'Playfair Display',serif; font-size:0.98rem; font-weight:700;
+  color:var(--brown); margin-bottom:0.8rem; padding-bottom:0.45rem;
+  border-bottom:2px solid var(--amber-lt);
+  display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap;
+}
+
+/* FIELDS */
+.f { display:flex; flex-direction:column; gap:0.28rem; margin-bottom:0.7rem; }
+.f:last-child { margin-bottom:0; }
+.f label { font-size:0.68rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; }
+/* font-size 16px prevents iOS zoom on focus */
+.f input[type="number"] {
+  padding:0.65rem 0.85rem; border:1.5px solid var(--border); border-radius:8px;
+  background:#FFFDF8; color:var(--text); font-family:'Lora',serif;
+  font-size:16px; width:100%; -webkit-appearance:none; appearance:none;
+}
+.f input:focus { outline:none; border-color:var(--amber); background:var(--amber-bg); }
+.f .hint { font-size:0.68rem; color:var(--muted); font-style:italic; }
+
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:0 0.65rem; }
+.g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0 0.5rem; }
+@media(max-width:360px){ .g2,.g3 { grid-template-columns:1fr; } }
+
+/* BIG TEIGMENGE */
+.teig-big {
+  background:var(--amber-bg); border:2px solid var(--amber); border-radius:10px;
+  padding:0.65rem 0.8rem; display:flex; align-items:center; gap:0.6rem; margin-bottom:0.7rem;
+}
+.teig-big input[type="number"] {
+  flex:1; border:none; background:transparent;
+  font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:700;
+  color:var(--brown); text-align:center; -webkit-appearance:none; min-width:0;
+}
+.teig-big input:focus { outline:none; }
+.teig-unit { font-size:1.1rem; color:var(--amber); font-weight:700; flex-shrink:0; }
+.stpr { display:flex; flex-direction:column; gap:0.2rem; flex-shrink:0; }
+.sbt {
+  width:38px; height:34px; border:1.5px solid var(--amber); border-radius:6px;
+  background:#fff; color:var(--amber); font-size:1.2rem; font-weight:700;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  -webkit-tap-highlight-color:transparent; user-select:none;
+}
+.sbt:active { background:var(--amber-bg); }
+
+/* PILLS */
+.pills { display:flex; gap:0.3rem; flex-wrap:wrap; margin:0.25rem 0 0.5rem; }
+.pill {
+  padding:0.48rem 0.8rem; border:1.5px solid var(--border); border-radius:20px;
+  background:transparent; color:var(--muted); font-family:'Lora',serif; font-size:0.8rem;
+  cursor:pointer; -webkit-tap-highlight-color:transparent; transition:all 0.12s;
+  min-height:40px; display:flex; align-items:center;
+}
+.pill.active { background:var(--amber); color:#fff; border-color:var(--amber); font-weight:600; }
+.pill:not(.active):active { background:var(--amber-bg); }
+
+/* MEHLMISCHUNG */
+.mh { display:grid; grid-template-columns:1fr 68px 68px; gap:0 0.4rem; margin-bottom:0.25rem; }
+.mh span { font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
+.mh span:not(:first-child) { text-align:right; }
+.mi {
+  display:grid; grid-template-columns:1fr 68px 68px;
+  align-items:center; gap:0 0.4rem; padding:0.48rem 0;
+  border-bottom:1px solid #EFE5D0;
+}
+.mi:last-of-type { border-bottom:none; }
+.mn { font-size:0.83rem; line-height:1.3; }
+.mi input[type="number"] {
+  padding:0.48rem 0.35rem; border:1.5px solid var(--border); border-radius:6px;
+  background:#FFFDF8; font-family:'Lora',serif; font-size:16px; text-align:right;
+  width:100%; -webkit-appearance:none;
+}
+.mi input:focus { outline:none; border-color:var(--amber); }
+.mg { font-size:0.78rem; color:var(--muted); text-align:right; font-style:italic; white-space:nowrap; }
+.msum { display:flex; justify-content:space-between; align-items:center; margin-top:0.6rem; padding-top:0.5rem; border-top:2px solid var(--border); }
+.sbadge { padding:0.28rem 0.7rem; border-radius:16px; font-size:0.8rem; font-weight:700; }
+.sok  { background:var(--green-bg); color:var(--green); }
+.sbad { background:var(--red-bg);   color:var(--red); }
+
+/* RESULT LIST */
+.rshead { background:var(--amber-bg); color:var(--amber); font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; padding:0.25rem 0.45rem; border-radius:4px; margin:0.35rem 0 0.1rem; }
+.rl { list-style:none; }
+.rl li { display:flex; justify-content:space-between; align-items:baseline; padding:0.5rem 0; border-bottom:1px solid #EFE5D0; gap:0.4rem; font-size:0.88rem; }
+.rl li:last-child { border-bottom:none; }
+.rl .rn { flex:1; min-width:0; }
+.rl .rp { color:var(--muted); font-size:0.72rem; white-space:nowrap; }
+.rl .rv { font-weight:700; font-size:0.98rem; color:var(--brown); white-space:nowrap; }
+.rl li.sub .rn { padding-left:1rem; font-size:0.8rem; color:var(--muted); }
+.rl li.sub .rv { font-size:0.85rem; color:var(--muted); font-weight:400; }
+.rtot { display:flex; justify-content:space-between; align-items:center; background:var(--brown); color:var(--amber-lt); border-radius:8px; padding:0.7rem 0.9rem; margin-top:0.45rem; font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; }
+.pb { display:inline-block; background:#EEE4CF; color:var(--muted); border-radius:10px; padding:0.03rem 0.4rem; font-size:0.67rem; margin-left:0.2rem; }
+
+/* TEMP */
+.tgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.45rem; margin-top:0.7rem; }
+@media(min-width:480px){ .tgrid { grid-template-columns:repeat(4,1fr); } }
+.tc-card { background:var(--amber-bg); border:1.5px solid var(--amber-lt); border-radius:8px; padding:0.6rem 0.65rem; }
+.tc-card.act { background:var(--amber); border-color:var(--amber); }
+.tl { font-size:0.63rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); display:block; margin-bottom:0.15rem; }
+.tc-card.act .tl { color:rgba(255,255,255,0.75); }
+.tv { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700; color:var(--brown); line-height:1; }
+.tc-card.act .tv { color:#fff; }
+.tu { font-size:0.9rem; font-weight:400; }
+.tn { font-size:0.65rem; color:var(--muted); font-style:italic; margin-top:0.18rem; display:block; }
+.tc-card.act .tn { color:rgba(255,255,255,0.65); }
+
+/* PREP CARDS */
+.pc-wrap { display:grid; grid-template-columns:repeat(3,1fr); gap:0.4rem; margin:0.4rem 0 0.3rem; }
+@media(max-width:340px){ .pc-wrap { grid-template-columns:1fr 1fr; } }
+.pc { background:#FFF8F0; border:1px solid var(--border); border-radius:8px; padding:0.55rem 0.4rem; text-align:center; }
+.pcl { font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); display:block; margin-bottom:0.18rem; }
+.pcv { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; color:var(--brown); }
+.pcu { font-size:0.72rem; font-weight:400; }
+.pc.pct { grid-column:1/-1; background:var(--green-bg); border-color:#A8D4B0; }
+.pc.pct .pcl { color:var(--green); }
+.pc.pct .pcv { color:var(--green); }
+.rv { display:flex; gap:0.35rem; flex-wrap:wrap; background:#F4F2EE; border:1px dashed var(--border); border-radius:8px; padding:0.45rem 0.6rem; margin:0.35rem 0; font-size:0.75rem; color:var(--muted); align-items:center; }
+.rv .ri { white-space:nowrap; }
+.rv .riv { font-weight:700; color:var(--text); }
+
+/* STOCKGARE */
+.sg { display:grid; grid-template-columns:repeat(4,1fr); gap:0.4rem; margin-top:0.3rem; }
+@media(max-width:360px){ .sg { grid-template-columns:1fr 1fr; } }
+.sgc { background:var(--green-bg); border:1px solid #A8D4B0; border-radius:8px; padding:0.6rem 0.35rem; text-align:center; }
+.sgt { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; color:var(--green); }
+.sgd { font-size:0.68rem; color:var(--green); font-weight:600; margin-top:0.1rem; }
+
+/* BOXES */
+.inote { background:#EDF3FF; border-left:3px solid #5B8DD9; padding:0.55rem 0.75rem; border-radius:0 6px 6px 0; font-size:0.76rem; color:#2B4D8A; margin-top:0.55rem; line-height:1.5; }
+.warn  { background:#FFF7E0; border:1.5px solid #DDB040; border-radius:8px; padding:0.65rem 0.8rem; font-size:0.78rem; color:#5C3F00; margin-top:0.6rem; line-height:1.5; display:none; }
+.warn.show { display:block; }
+.rbadge { display:inline-flex; background:var(--amber-bg); border:1.5px solid var(--amber-lt); border-radius:16px; padding:0.18rem 0.65rem; font-size:0.68rem; color:var(--amber); font-weight:700; font-family:'Lora',serif; }
+.sep { text-align:center; margin:0.2rem 0; font-family:'Playfair Display',serif; font-style:italic; color:var(--amber); font-size:0.88rem; display:flex; align-items:center; gap:0.4rem; }
+.sep::before,.sep::after { content:''; flex:1; height:1px; background:var(--amber-lt); }
+
+/* AUFFRISCHEN */
+.mcards { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-bottom:0.9rem; }
+.mc { border:2px solid var(--border); border-radius:10px; background:#FFFDF8; padding:0.75rem 0.6rem; text-align:center; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:all 0.12s; }
+.mc .mci { font-size:1.8rem; display:block; margin-bottom:0.25rem; line-height:1; }
+.mc .mct { font-family:'Playfair Display',serif; font-size:0.85rem; font-weight:700; color:var(--brown); display:block; line-height:1.2; margin-bottom:0.18rem; }
+.mc .mcr { font-size:0.68rem; color:var(--muted); font-style:italic; }
+.mc.active { border-color:var(--amber); background:var(--amber-bg); box-shadow:0 0 0 3px rgba(192,123,42,0.12); }
+
+.afw { display:flex; align-items:stretch; border:2px solid var(--amber); border-radius:10px; overflow:hidden; margin-bottom:0.9rem; background:var(--amber-bg); }
+.afm,.afp { width:50px; background:var(--amber); color:#fff; font-size:1.5rem; font-weight:700; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; -webkit-tap-highlight-color:transparent; user-select:none; flex-shrink:0; }
+.afm:active,.afp:active { opacity:0.7; }
+.afw input[type="number"] { flex:1; border:none; background:transparent; font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--brown); text-align:center; -webkit-appearance:none; min-width:0; }
+.afw input:focus { outline:none; }
+
+.afb { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.4rem; margin-bottom:0.45rem; }
+.ab { background:var(--card); border:1.5px solid var(--border); border-radius:10px; padding:0.7rem 0.4rem; text-align:center; }
+.abl { font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); display:block; margin-bottom:0.2rem; }
+.abv { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--brown); }
+.abu { font-size:0.75rem; font-weight:400; }
+.aftot { display:flex; justify-content:space-between; align-items:center; background:var(--brown); color:var(--amber-lt); border-radius:10px; padding:0.8rem 1rem; font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; margin-bottom:0.45rem; }
+.afinfo { background:var(--green-bg); border:1.5px solid #A8D4B0; border-radius:8px; padding:0.7rem 0.85rem; font-size:0.78rem; color:var(--green); line-height:1.6; }
+.afinfo strong { display:block; margin-bottom:0.18rem; }
+
+@media(min-width:601px){
+  header { position:static; padding:1rem 1.5rem; }
+  header h1 { font-size:1.5rem; }
+  .page { padding:0.9rem 1rem 0; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <span class="hdr-icon">🌾</span>
+    <div>
+      <h1>Sauerteig Rechner</h1>
+      <p>COPAIN Workshop 2025</p>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════════════════ TAB BROT ══ -->
+<div class="tc active" id="tab-brot">
+<div class="page">
+
+  <div class="card">
+    <div class="ct">⚙️ Grundeinstellungen</div>
+
+    <div class="f">
+      <label>Teigmenge</label>
+      <div class="teig-big">
+        <div class="stpr">
+          <button class="sbt" id="tminus">−</button>
+          <button class="sbt" id="tplus">+</button>
+        </div>
+        <input type="number" id="tv" inputmode="numeric" min="100" max="9999" step="50" value="650">
+        <span class="teig-unit">g</span>
+      </div>
+    </div>
+
+    <div class="f">
+      <label>Sauerteig Anteil</label>
+      <div class="pills" id="spills">
+        <button class="pill" data-p="15">Sommer 15%</button>
+        <button class="pill active" data-p="19">Standard 19%</button>
+        <button class="pill" data-p="20">Winter 20%</button>
+      </div>
+      <input type="number" id="sp" inputmode="decimal" min="5" max="40" step="0.5" value="19">
+      <span class="hint">% des Gesamtmehls</span>
+    </div>
+
+    <div class="g2">
+      <div class="f">
+        <label>Hydration / Wasser (%)</label>
+        <input type="number" id="wp" inputmode="decimal" min="50" max="100" step="0.5" value="69">
+      </div>
+      <div class="f">
+        <label>Salz (%)</label>
+        <input type="number" id="slp" inputmode="decimal" min="1" max="5" step="0.1" value="2.5">
+      </div>
+      <div class="f">
+        <label>Bassinage (%)</label>
+        <input type="number" id="bp" inputmode="decimal" min="0" max="30" step="1" value="5">
+        <span class="hint">% vom Gesamtwasser</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mehlmischung -->
+  <div class="card">
+    <div class="ct">⚖️ Mehlmischung</div>
+    <div class="mh">
+      <span>Mehlsorte</span><span>%</span><span>Gramm</span>
+    </div>
+    <div class="mi"><span class="mn">Weizen Weiss</span><input type="number" class="mp" data-m="weiss" inputmode="numeric" min="0" max="100" step="1" value="0"><span class="mg" id="gw">0 g</span></div>
+    <div class="mi"><span class="mn">Weizen Halbweiss</span><input type="number" class="mp" data-m="halbweiss" inputmode="numeric" min="0" max="100" step="1" value="85"><span class="mg" id="ghw">–</span></div>
+    <div class="mi"><span class="mn">Weizen Vollkorn</span><input type="number" class="mp" data-m="vollkorn" inputmode="numeric" min="0" max="100" step="1" value="15"><span class="mg" id="gvk">–</span></div>
+    <div class="mi"><span class="mn">Roggen Vollkorn</span><input type="number" class="mp" data-m="roggen" inputmode="numeric" min="0" max="100" step="1" value="0"><span class="mg" id="gr">0 g</span></div>
+    <div class="mi"><span class="mn">Dinkel Vollkorn</span><input type="number" class="mp" data-m="dinkel" inputmode="numeric" min="0" max="100" step="1" value="0"><span class="mg" id="gd">0 g</span></div>
+    <div class="msum">
+      <span style="font-size:0.82rem;font-weight:600;">Total Mehlanteil:</span>
+      <span class="sbadge" id="msb">100%</span>
+    </div>
+  </div>
+
+  <!-- Rezept -->
+  <div class="card">
+    <div class="ct">📋 Rezept Übersicht</div>
+    <div id="rl"></div>
+  </div>
+
+  <!-- Wassertemperatur -->
+  <div class="card">
+    <div class="ct">🌡️ Wassertemperatur</div>
+    <div class="g3">
+      <div class="f"><label>GTT – Ziel °C</label><input type="number" id="gtt" inputmode="decimal" min="18" max="32" step="0.5" value="26"></div>
+      <div class="f"><label>LT – Luft °C</label><input type="number" id="lt" inputmode="decimal" min="-5" max="45" step="0.5" value="20"></div>
+      <div class="f"><label>MT – Mehl °C</label><input type="number" id="mt" inputmode="decimal" min="-5" max="45" step="0.5" value="18"></div>
+    </div>
+    <div class="f" style="margin-top:0.5rem;">
+      <label>Methode</label>
+      <div class="pills" id="tpills">
+        <button class="pill active" data-t="hw">🖐 Hand Winter</button>
+        <button class="pill" data-t="kw">⚙️ Kneter Winter</button>
+        <button class="pill" data-t="hs">🖐 Hand Sommer</button>
+        <button class="pill" data-t="ks">⚙️ Kneter Sommer</button>
+      </div>
+    </div>
+    <div class="tgrid" id="tr"></div>
+    <div class="inote">💡 Sauerteig aus Kühlschrank? <strong>+1–2°C</strong> zur berechneten Wassertemperatur.</div>
+  </div>
+
+  <div class="sep">Sauerteig &amp; Starter vorbereiten</div>
+
+  <!-- Sauerteig ansetzen -->
+  <div class="card">
+    <div class="ct">🫙 Sauerteig ansetzen <span class="rbadge">2 : 10 : 8</span></div>
+    <p style="font-size:0.76rem;color:var(--muted);font-style:italic;margin-bottom:0.7rem;line-height:1.5;">Ziel: Verdoppelung — 26°C (Wasser ≈32°C) — ca. <strong>12 Std</strong> warm</p>
+    <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:0.28rem;">Benötigte Menge</p>
+    <div class="pc-wrap" id="stb"></div>
+    <div class="rv" id="str"></div>
+    <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--green);margin:0.55rem 0 0.28rem;">Ansetzen (inkl. Reserve +20%)</p>
+    <div class="pc-wrap" id="sta"></div>
+    <div class="inote">Verhältnis: <strong>2 / 10 / 8</strong> → Anstellgut 10% · Mehl 50% · Wasser 40%</div>
+  </div>
+
+  <!-- Starter auffrischen -->
+  <div class="card">
+    <div class="ct">🧫 Starter auffrischen <span class="rbadge">2 : 5 : 4</span></div>
+    <p style="font-size:0.76rem;color:var(--muted);font-style:italic;margin-bottom:0.7rem;line-height:1.5;">Ziel: 2.5-fach — 26°C (Wasser ≈32°C) — ca. <strong>10 Std</strong> warm</p>
+    <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:0.28rem;">Benötigte Menge</p>
+    <div class="pc-wrap" id="agb"></div>
+    <div class="rv" id="agr"></div>
+    <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--green);margin:0.55rem 0 0.28rem;">Ansetzen (inkl. Reserve +25%)</p>
+    <div class="pc-wrap" id="aga"></div>
+    <div class="warn" id="minw">
+      <strong>⚠️ Mindestmenge!</strong> Berechnung &lt;100 g — mindestens ansetzen:
+      Anstellgut <strong>20 g</strong> · Mehl <strong>50 g</strong> · Wasser <strong>40 g</strong> = <strong>110 g</strong>
+    </div>
+    <div class="inote">Verhältnis: <strong>2 / 5 / 4</strong> → Alt. Anstellgut 19% · Mehl 45% · Wasser 36%</div>
+  </div>
+
+  <!-- Stockgare -->
+  <div class="card">
+    <div class="ct">⏱️ Stockgare</div>
+    <div class="sg">
+      <div class="sgc"><div class="sgt">24°C</div><div class="sgd">5–5.5 Std</div></div>
+      <div class="sgc"><div class="sgt">25°C</div><div class="sgd">4.5–5 Std</div></div>
+      <div class="sgc"><div class="sgt">26°C</div><div class="sgd">4–4.5 Std</div></div>
+      <div class="sgc"><div class="sgt">27°C</div><div class="sgd">ca. 4 Std</div></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ════════════════════════ TAB AUFFRISCHEN ══ -->
+<div class="tc" id="tab-auffrischen">
+<div class="page">
+
+  <div class="card">
+    <div class="ct">🔄 Sauerteig Auffrischen</div>
+
+    <div class="mcards">
+      <button class="mc active" data-mode="st">
+        <span class="mci">🫙</span>
+        <span class="mct">Sauerteig ansetzen</span>
+        <span class="mcr">Ratio 2 : 10 : 8</span>
+      </button>
+      <button class="mc" data-mode="ag">
+        <span class="mci">🧫</span>
+        <span class="mct">Starter auffrischen</span>
+        <span class="mcr">Ratio 2 : 5 : 4</span>
+      </button>
+    </div>
+
+    <div class="f" style="margin-bottom:0.4rem;">
+      <label id="afl">Gewünschte Menge Sauerteig (g)</label>
+    </div>
+    <div class="afw">
+      <button class="afm" id="afm">−</button>
+      <input type="number" id="afv" inputmode="numeric" min="20" max="9999" step="10" value="200">
+      <button class="afp" id="afp">+</button>
+    </div>
+
+    <div id="afi-st" style="font-size:0.76rem;color:var(--muted);font-style:italic;margin-bottom:0.8rem;line-height:1.5;">
+      🎯 Ziel: Verdoppelung — ca. <strong>12 Std</strong> an warmem Ort (≥26°C)
+    </div>
+    <div id="afi-ag" style="display:none;font-size:0.76rem;color:var(--muted);font-style:italic;margin-bottom:0.8rem;line-height:1.5;">
+      🎯 Ziel: 2.5-fach — ca. <strong>10 Std</strong> an warmem Ort (≥26°C)
+    </div>
+
+    <div class="afb" id="afblocks"></div>
+    <div class="aftot" id="aftot"></div>
+    <div class="afinfo" id="afinfo"></div>
+    <div class="warn" id="afwarn" style="margin-top:0.65rem;">
+      <strong>⚠️ Mindestmenge:</strong> Alt. Anstellgut <strong>20 g</strong> · Mehl <strong>50 g</strong> · Wasser <strong>40 g</strong> = <strong>110 g</strong>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="bnav-btn active" data-tab="brot">
+    <span class="bi">🍞</span><span>Brot Rezept</span>
+  </button>
+  <button class="bnav-btn" data-tab="auffrischen">
+    <span class="bi">🔄</span><span>Auffrischen</span>
+  </button>
+</nav>
+
+<script>
+const R10 = x => Math.ceil(x/10)*10;
+const G  = n => Math.round(n)+' g';
+const R1 = n => Math.round(n*10)/10;
+
+// TABS
+document.querySelectorAll('.bnav-btn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.bnav-btn').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.tc').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById('tab-'+b.dataset.tab).classList.add('active');
+}));
+
+// TEIG STEPPER
+const tv = document.getElementById('tv');
+document.getElementById('tminus').addEventListener('click', () => { tv.value = Math.max(100,(+tv.value||650)-50); calc(); });
+document.getElementById('tplus' ).addEventListener('click', () => { tv.value = Math.min(9999,(+tv.value||650)+50); calc(); });
+tv.addEventListener('input', calc);
+
+// SAUER PILLS
+document.querySelectorAll('#spills .pill').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('#spills .pill').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById('sp').value = b.dataset.p;
+  calc();
+}));
+document.getElementById('sp').addEventListener('input', () => {
+  document.querySelectorAll('#spills .pill').forEach(x => x.classList.remove('active'));
+  calc();
+});
+
+// OTHER INPUTS
+['wp','slp','bp','gtt','lt','mt'].forEach(id => document.getElementById(id).addEventListener('input', calc));
+document.querySelectorAll('.mp').forEach(i => i.addEventListener('input', calc));
+
+// TEMP PILLS
+let aTemp = 'hw';
+document.querySelectorAll('#tpills .pill').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('#tpills .pill').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  aTemp = b.dataset.t;
+  renderTemp();
+}));
+
+// ═════════════════════════════════ MAIN CALC ══
+function calc() {
+  const teig   = +tv.value || 650;
+  const sP     = (+document.getElementById('sp' ).value || 19) / 100;
+  const wP     = (+document.getElementById('wp' ).value || 69) / 100;
+  const bP     = (+document.getElementById('bp' ).value ||  5) / 100;
+  const slP    = (+document.getElementById('slp').value ||2.5) / 100;
+
+  const tM   = R10(teig / (1 + wP + slP + sP));
+  const tW   = tM * wP;
+  const wT   = tW * (1-bP);
+  const wB   = tW * bP;
+  const sl   = tM * slP;
+  const st   = tM * sP;
+  const tot  = tM + tW + sl + st;
+
+  // Mehl breakdown
+  const mp = {}; let spct = 0;
+  document.querySelectorAll('.mp').forEach(i => { const v = +i.value||0; mp[i.dataset.m]=v/100; spct+=v; });
+  const badge = document.getElementById('msb');
+  badge.textContent = spct+'%';
+  badge.className = 'sbadge '+(spct===100?'sok':'sbad');
+  const gids = {weiss:'gw',halbweiss:'ghw',vollkorn:'gvk',roggen:'gr',dinkel:'gd'};
+  Object.keys(gids).forEach(k => { document.getElementById(gids[k]).textContent = tM*(mp[k]||0) > 0 ? G(tM*(mp[k]||0)) : '0 g'; });
+
+  // Rezept list
+  const ml = {weiss:'Weizen Weiss',halbweiss:'Weizen Halbweiss',vollkorn:'Weizen Vollkorn',roggen:'Roggen Vollkorn',dinkel:'Dinkel Vollkorn'};
+  let h='';
+  h+=`<div class="rshead">Mehl</div><ul class="rl">`;
+  h+=`<li><span class="rn"><strong>Total Mehl</strong></span><span class="rp">100%</span><span class="rv">${G(tM)}</span></li>`;
+  ['weiss','halbweiss','vollkorn','roggen','dinkel'].forEach(k => { if((mp[k]||0)>0) h+=`<li class="sub"><span class="rn">↳ ${ml[k]}</span><span class="rp">${R1((mp[k]||0)*100)}%</span><span class="rv">${G(tM*(mp[k]||0))}</span></li>`; });
+  h+=`</ul><div class="rshead">Wasser</div><ul class="rl">`;
+  h+=`<li><span class="rn"><strong>Total Wasser</strong><span class="pb">${R1(wP*100)}%</span></span><span class="rp"></span><span class="rv">${G(tW)}</span></li>`;
+  h+=`<li class="sub"><span class="rn">↳ Wasser Teig</span><span class="rp">${R1((1-bP)*100)}% v.W.</span><span class="rv">${G(wT)}</span></li>`;
+  h+=`<li class="sub"><span class="rn">↳ Bassinage</span><span class="rp">${R1(bP*100)}% v.W.</span><span class="rv">${G(wB)}</span></li>`;
+  h+=`</ul><div class="rshead">Weiteres</div><ul class="rl">`;
+  h+=`<li><span class="rn"><strong>Salz</strong><span class="pb">${R1(slP*100)}%</span></span><span class="rp"></span><span class="rv">${G(sl)}</span></li>`;
+  h+=`<li><span class="rn"><strong>Sauerteig</strong><span class="pb">${R1(sP*100)}%</span></span><span class="rp"></span><span class="rv">${G(st)}</span></li>`;
+  h+=`</ul><div class="rtot"><span>TOTAL TEIG</span><span>${G(tot)}</span></div>`;
+  document.getElementById('rl').innerHTML = h;
+
+  renderTemp();
+
+  // Sauerteig prep (2:10:8 = 10%/50%/40%)
+  const stB = st, stA = stB*1.2, stR = stB*0.2;
+  renderPC('stb', stB*.10, stB*.50, stB*.40, stB, 'Anstellgut');
+  renderRV('str', stR*.10, stR*.50, stR*.40, stR, '+20%');
+  renderPC('sta', stA*.10, stA*.50, stA*.40, stA, 'Anstellgut');
+
+  // Starter prep (2:5:4 = 19%/45%/36%)
+  const agB = stA*.10, agA = agB*1.25, agR = agB*0.25;
+  renderPC('agb', agB*.19, agB*.45, agB*.36, agB, 'Alt. Anstellgut');
+  renderRV('agr', agR*.19, agR*.45, agR*.36, agR, '+25%');
+  renderPC('aga', agA*.19, agA*.45, agA*.36, agA, 'Alt. Anstellgut');
+  document.getElementById('minw').classList.toggle('show', agA < 100);
+}
+
+function renderPC(id, s, m, w, tot, slabel) {
+  document.getElementById(id).innerHTML =
+    `<div class="pc"><span class="pcl">${slabel}</span><span class="pcv">${Math.round(s)}<span class="pcu"> g</span></span></div>`+
+    `<div class="pc"><span class="pcl">Mehl</span><span class="pcv">${Math.round(m)}<span class="pcu"> g</span></span></div>`+
+    `<div class="pc"><span class="pcl">Wasser</span><span class="pcv">${Math.round(w)}<span class="pcu"> g</span></span></div>`+
+    `<div class="pc pct"><span class="pcl">Total</span><span class="pcv">${Math.round(tot)}<span class="pcu"> g</span></span></div>`;
+}
+function renderRV(id, s, m, w, tot, lbl) {
+  document.getElementById(id).innerHTML =
+    `<span style="font-weight:700;color:var(--amber);font-size:0.72rem;">Reserve ${lbl}</span>`+
+    `<span class="ri">Anstellgut <span class="riv">${Math.round(s)} g</span></span>`+
+    `<span class="ri">Mehl <span class="riv">${Math.round(m)} g</span></span>`+
+    `<span class="ri">Wasser <span class="riv">${Math.round(w)} g</span></span>`+
+    `<span class="ri">Total <span class="riv">${Math.round(tot)} g</span></span>`;
+}
+
+function renderTemp() {
+  const gtt=+document.getElementById('gtt').value||26;
+  const lt =+document.getElementById('lt' ).value||20;
+  const mt =+document.getElementById('mt' ).value||18;
+  const b  = gtt*2-(lt+mt)/2;
+  const td = [
+    {k:'hw', l:'🖐 Hand – Winter',   v:b,     n:'Kein Kneter'},
+    {k:'kw', l:'⚙️ Kneter – Winter', v:b-7,   n:'−7°C Reibung'},
+    {k:'hs', l:'🖐 Hand – Sommer',   v:b-4,   n:'−4°C Hochsommer'},
+    {k:'ks', l:'⚙️ Kneter – Sommer', v:b-4-7, n:'−4°C −7°C'},
+  ];
+  document.getElementById('tr').innerHTML = td.map(t =>
+    `<div class="tc-card${t.k===aTemp?' act':''}"><span class="tl">${t.l}</span><span class="tv">${R1(t.v)}<span class="tu">°C</span></span><span class="tn">${t.n}</span></div>`
+  ).join('');
+}
+
+// AUFFRISCHEN TAB
+let afMode = 'st';
+const afv = document.getElementById('afv');
+
+document.querySelectorAll('.mc').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.mc').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  afMode = b.dataset.mode;
+  document.getElementById('afi-st').style.display = afMode==='st' ? '' : 'none';
+  document.getElementById('afi-ag').style.display = afMode==='ag' ? '' : 'none';
+  document.getElementById('afl').textContent = afMode==='st' ? 'Gewünschte Menge Sauerteig (g)' : 'Gewünschte Menge Starter / Anstellgut (g)';
+  calcAF();
+}));
+document.getElementById('afm').addEventListener('click', () => { afv.value = Math.max(20,(+afv.value||200)-10); calcAF(); });
+document.getElementById('afp').addEventListener('click', () => { afv.value = Math.min(9999,(+afv.value||200)+10); calcAF(); });
+afv.addEventListener('input', calcAF);
+
+function calcAF() {
+  const m = +afv.value||200;
+  let s,me,w,rt,zt,sl;
+  if (afMode==='st') {
+    s=m*.10; me=m*.50; w=m*.40;
+    rt='Verhältnis <strong>2 : 10 : 8</strong> — Anstellgut 10% · Mehl 50% · Wasser 40%';
+    zt='Mindestens Verdoppelung — ca. <strong>12 Std</strong> an warmem Ort';
+    sl='Anstellgut';
+    document.getElementById('afwarn').style.display='none';
+  } else {
+    s=m*.19; me=m*.45; w=m*.36;
+    rt='Verhältnis <strong>2 : 5 : 4</strong> — Alt. Anstellgut 19% · Mehl 45% · Wasser 36%';
+    zt='2.5-fache Steigerung — ca. <strong>10 Std</strong> an warmem Ort';
+    sl='Alt. Anstellgut';
+    document.getElementById('afwarn').classList.toggle('show', m<100);
+  }
+  document.getElementById('afblocks').innerHTML =
+    `<div class="ab"><span class="abl">${sl}</span><span class="abv">${Math.round(s)}<span class="abu"> g</span></span></div>`+
+    `<div class="ab"><span class="abl">Mehl</span><span class="abv">${Math.round(me)}<span class="abu"> g</span></span></div>`+
+    `<div class="ab"><span class="abl">Wasser</span><span class="abv">${Math.round(w)}<span class="abu"> g</span></span></div>`;
+  document.getElementById('aftot').innerHTML = `<span>Total</span><span>${Math.round(s+me+w)} g</span>`;
+  document.getElementById('afinfo').innerHTML = `<strong>${rt}</strong>${zt}`;
+}
+
+calc();
+calcAF();
+</script>
+</body>
+</html>
