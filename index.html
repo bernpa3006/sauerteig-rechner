@@ -260,6 +260,45 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
 .aftot { display:flex; justify-content:space-between; align-items:center; background:var(--brown); color:var(--amber-lt); border-radius:10px; padding:0.8rem 1rem; font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; margin-bottom:0.45rem; }
 .afinfo { background:var(--green-bg); border:1.5px solid #A8D4B0; border-radius:8px; padding:0.7rem 0.85rem; font-size:0.78rem; color:var(--green); line-height:1.6; }
 .afinfo strong { display:block; margin-bottom:0.18rem; }
+/* ── ACCORDION ── */
+.acc-btn {
+  width:100%; display:flex; align-items:center; justify-content:space-between;
+  background:transparent; border:none; border-top:1px dashed var(--border);
+  padding:0.6rem 0 0; margin-top:0.6rem;
+  font-family:'Lora',serif; font-size:0.82rem; font-weight:700;
+  color:var(--brown); cursor:pointer; -webkit-tap-highlight-color:transparent;
+  text-align:left;
+}
+.acc-btn .acc-arrow {
+  font-size:0.7rem; color:var(--amber);
+  transition:transform 0.25s; flex-shrink:0; margin-left:0.5rem;
+}
+.acc-btn.open .acc-arrow { transform:rotate(180deg); }
+.acc-body {
+  max-height:0; overflow:hidden;
+  transition:max-height 0.35s ease, padding 0.2s;
+}
+.acc-body.open { max-height:9999px; }
+.acc-inner { padding-top:0.7rem; }
+.step-list { list-style:none; }
+.step-list li {
+  display:flex; gap:0.7rem; padding:0.55rem 0;
+  border-bottom:1px solid rgba(0,0,0,0.06); font-size:0.8rem; line-height:1.55;
+}
+.step-list li:last-child { border-bottom:none; }
+.step-num {
+  flex-shrink:0; width:22px; height:22px;
+  background:var(--amber); color:#fff;
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-size:0.72rem; font-weight:700;
+  margin-top:0.05rem;
+}
+.step-text strong { color:var(--brown); }
+.step-tag {
+  display:inline-block; background:var(--amber-bg); color:var(--amber);
+  border-radius:10px; padding:0.1rem 0.45rem;
+  font-size:0.65rem; font-weight:700; margin-bottom:0.2rem; display:block;
+}
 @media(min-width:601px){
   header { position:static; padding:1rem 1.5rem; }
   header h1 { font-size:1.5rem; }
@@ -320,6 +359,10 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
         • <strong>Grosser Laib</strong> (900–1100 g gebacken) → <strong>1100–1300 g Teig</strong><br>
         <span style="font-size:0.7rem;color:var(--muted);">Das Brot verliert beim Backen ca. 15–20% Gewicht (Wasserverdunstung).</span>
       </div>
+      <button class="acc-btn" data-acc="steps-copain">📋 Zubereitung anzeigen <span class="acc-arrow">▼</span></button>
+      <div class="acc-body" id="steps-copain">
+        <div class="acc-inner" id="steps-copain-inner"></div>
+      </div>
     </div>
     <div class="recipe-note note-green" id="note-anfaenger">
       <strong>🌾 Einfaches Brot</strong>
@@ -330,6 +373,10 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
         • <strong>Normaler Laib</strong> (700–800 g gebacken) → <strong>850–950 g Teig</strong><br>
         • <strong>Kastenform (30 cm)</strong> → <strong>800–900 g Teig</strong><br>
         <span style="font-size:0.7rem;color:var(--muted);">Das Brot verliert beim Backen ca. 15–20% Gewicht (Wasserverdunstung).</span>
+      </div>
+      <button class="acc-btn" data-acc="steps-anfaenger">📋 Zubereitung anzeigen <span class="acc-arrow">▼</span></button>
+      <div class="acc-body" id="steps-anfaenger">
+        <div class="acc-inner" id="steps-anfaenger-inner"></div>
       </div>
     </div>
     <div class="recipe-note note-blue" id="note-focaccia">
@@ -342,6 +389,10 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
         • <strong>Grosses Blech</strong> (40×60 cm) → <strong>1000–1200 g Teig</strong><br>
         <span style="font-size:0.7rem;color:var(--muted);">Ca. 1 cm Teigdicke vor dem Backen anstreben.</span>
       </div>
+      <button class="acc-btn" data-acc="steps-focaccia">📋 Zubereitung anzeigen <span class="acc-arrow">▼</span></button>
+      <div class="acc-body" id="steps-focaccia">
+        <div class="acc-inner" id="steps-focaccia-inner"></div>
+      </div>
     </div>
     <div class="recipe-note note-red" id="note-pizza">
       <strong>🍕 Pizza</strong>
@@ -352,6 +403,10 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
         • <strong>Normal (Ø 28–32 cm)</strong> → <strong>260–300 g</strong><br>
         • <strong>Dick / Pan Pizza</strong> → <strong>320–400 g</strong><br>
         <span style="font-size:0.7rem;color:var(--muted);">Teigmenge oben anpassen: z.B. 6 × 280 g = 1680 g eingeben.</span>
+      </div>
+      <button class="acc-btn" data-acc="steps-pizza">📋 Zubereitung anzeigen <span class="acc-arrow">▼</span></button>
+      <div class="acc-body" id="steps-pizza">
+        <div class="acc-inner" id="steps-pizza-inner"></div>
       </div>
     </div>
   </div>
@@ -704,6 +759,9 @@ function calc() {
   renderRV('agr',agR*.19,agR*.45,agR*.36,agR,'+25%');
   renderPC('aga',agA*.19,agA*.45,agA*.36,agA,'Alt. Anstellgut');
   document.getElementById('minw').classList.toggle('show',agA<100);
+
+  // Dynamic recipe steps
+  renderSteps(tM, tW, sl, st, bP, wP, mp);
 }
 
 function renderPC(id,s,m,w,tot,sl){
@@ -774,6 +832,142 @@ function calcAF(){
     `<div class="ab"><span class="abl">Wasser</span><span class="abv">${Math.round(w)}<span class="abu"> g</span></span></div>`;
   document.getElementById('aftot').innerHTML=`<span>Total</span><span>${Math.round(s+me+w)} g</span>`;
   document.getElementById('afinfo').innerHTML=`<strong>${rt}</strong>${zt}`;
+}
+
+// ── ACCORDION ─────────────────────────────────────────────
+document.querySelectorAll('.acc-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id   = btn.dataset.acc;
+    const body = document.getElementById(id);
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    btn.classList.toggle('open', !isOpen);
+    btn.innerHTML = (isOpen ? '📋 Zubereitung anzeigen' : '📋 Zubereitung ausblenden') +
+      ` <span class="acc-arrow">${isOpen ? '▼' : '▲'}</span>`;
+  });
+});
+
+// ── STEP HELPER ────────────────────────────────────────────
+function step(n, tag, text) {
+  return `<li><span class="step-num">${n}</span><div class="step-text"><span class="step-tag">${tag}</span>${text}</div></li>`;
+}
+function stepList(items) {
+  return `<ol class="step-list">${items.join('')}</ol>`;
+}
+
+// ── DYNAMIC STEP RENDERING ─────────────────────────────────
+let _lastStepVals = {};
+
+function renderSteps(tM, tW, sl, st, bP, wP, mp) {
+  const activeRec = document.querySelector('.rc.active')?.dataset.recipe || 'copain';
+  _lastStepVals = { tM, tW, sl, st, bP, wP, mp, activeRec };
+
+  // ── COPAIN ──
+  const wAutolyse = Math.round(tW * (1 - bP)); // ~95% of water for autolyse
+  const wBass     = Math.round(tW * bP);        // bassinage rest
+  const el_c = document.getElementById('steps-copain-inner');
+  if (el_c) el_c.innerHTML = stepList([
+    step(1, 'Starter auffrischen – Tag 1, Abend',
+      `Starter <strong>${Math.round(st * 1.2 * 0.10)} g</strong> Anstellgut auffrischen (Verhältnis 2:10:8). Zieltemp. 26°C, Wasser ca. 32°C.`),
+    step(2, 'Autolyse',
+      `<strong>${G(tM)}</strong> Mehl und <strong>${G(wAutolyse)}</strong> Wasser grob mischen. Abdecken, <strong>30–60 Min.</strong> ruhen lassen.`),
+    step(3, 'Sauerteig einarbeiten',
+      `<strong>${G(st)}</strong> reifen Sauerteig zugeben, mit nassen Händen einkneten bis gleichmässig verteilt.`),
+    step(4, 'Salz + Bassinage',
+      `<strong>${G(sl)}</strong> Salz einstreuen. Restliche <strong>${G(wBass)}</strong> Wasser (Bassinage) nach und nach einarbeiten.`),
+    step(5, 'Stockgare – 4–4.5 Std. bei 26°C',
+      `In den ersten 2 Std. alle 30 Min. <strong>dehnen &amp; falten</strong> (4 Runden). Danach ruhen bis Teig sichtbar luftig und aufgegangen.`),
+    step(6, 'Vorformen',
+      `Teig auf leicht bemehlte Fläche kippen, sanft vorformen (rund). <strong>20–30 Min.</strong> abgedeckt ruhen.`),
+    step(7, 'Endformen',
+      `Straff zu rundem Laib oder Batard formen. In bemehltes Gärkörbchen legen, Naht oben.`),
+    step(8, 'Stückgare',
+      `<strong>Option A:</strong> 45–60 Min. bei Raumtemperatur.<br><strong>Option B (empfohlen):</strong> 8–16 Std. im Kühlschrank.`),
+    step(9, 'Backen',
+      `Ofen mit Gusstopf auf <strong>250°C</strong> vorheizen (mind. 45 Min.). Teigling einschneiden. <strong>20 Min. mit Deckel</strong>, dann <strong>20–25 Min. ohne Deckel</strong> bis dunkelbraun.`),
+  ]);
+
+  // ── EINFACHES BROT ──
+  const el_a = document.getElementById('steps-anfaenger-inner');
+  if (el_a) el_a.innerHTML = stepList([
+    step(1, 'Teig ansetzen – Tag 1',
+      `<strong>${G(tM)}</strong> Mehl mit <strong>${G(st)}</strong> aktivem Sauerteig und <strong>${G(tW)}</strong> Wasser grob mischen. <strong>45 Min.</strong> abgedeckt ruhen.`),
+    step(2, 'Salz einarbeiten',
+      `<strong>${G(sl)}</strong> Salz und 10 ml Wasser hinzufügen. <strong>4–6 Min.</strong> kneten bis glatt.`),
+    step(3, 'Stockgare – 3× Dehnen &amp; Falten',
+      `Nach je <strong>45 Min.</strong> dehnen &amp; falten – insgesamt 3 Runden. Danach ruhen bis der Teig schön aufgegangen ist.`),
+    step(4, 'Drei Coil Folds',
+      `Nach weiteren 45 Min. weitere <strong>3 Coil Folds</strong> (je ca. 45 Min. Abstand). Teig abdecken und über Nacht kühl stellen.`),
+    step(5, 'Formen &amp; Stückgare',
+      `Teig formen, in Gärkörbchen legen. <strong>30 Min.</strong> Raumtemperatur, dann im Kühlschrank bis zum Backen.`),
+    step(6, 'Backen – Tag 2',
+      `Ofen mit Gusseisentopf auf <strong>250°C Ober-/Unterhitze</strong> vorheizen (mind. 30 Min.). Teigling einschneiden, direkt in heissen Topf setzen.`),
+    step(7, 'Mit Deckel',
+      `<strong>30 Min. bei 250°C mit Deckel.</strong> Dann Deckel abnehmen.`),
+    step(8, 'Ohne Deckel',
+      `<strong>20–25 Min. bei 210°C</strong> ohne Deckel bis zur gewünschten Bräune fertig backen.`),
+    step(9, 'Auskühlen',
+      `Mind. <strong>1 Std.</strong> auf Gitter auskühlen lassen vor dem Anschneiden.`),
+  ]);
+
+  // ── FOCACCIA ──
+  const wFocMain = Math.round(tW * (260 / 287)); // 90.6% for autolyse
+  const wFocRest = Math.round(tW - wFocMain);
+  const oel      = Math.round(tM * (13 / 333));   // 3.9% olive oil
+  const el_f = document.getElementById('steps-focaccia-inner');
+  if (el_f) el_f.innerHTML = stepList([
+    step(1, 'Autolyse',
+      `<strong>${G(tM)}</strong> Mehl und <strong>${G(wFocMain)}</strong> Wasser (Grossteil) grob mischen bis alles befeuchtet. Abdecken, <strong>30–45 Min.</strong> ruhen.`),
+    step(2, 'Sauerteig einarbeiten',
+      `<strong>${G(st)}</strong> Sauerteig zugeben, mit nassen Händen sanft einkneten bis gleichmässig verteilt.`),
+    step(3, 'Salz &amp; Restwasser',
+      `<strong>${G(sl)}</strong> Salz einarbeiten. Restliche <strong>${G(wFocRest)}</strong> Wasser nach und nach einkneten bis Teig wieder zusammenhält.`),
+    step(4, 'Olivenöl',
+      `<strong>${oel} g Olivenöl</strong> unterziehen bis Teig weich und leicht glänzend ist.`),
+    step(5, 'Stockgare – 3–4 Std. bei 22–25°C',
+      `Alle <strong>30 Min. dehnen &amp; falten</strong> (4 Runden in den ersten 2 Std.). Danach ruhen bis der Teig sichtbar luftig ist.`),
+    step(6, 'Kaltgare (empfohlen)',
+      `Mit geölten Händen in gut geölte Schüssel legen. Abdecken und <strong>12–24 Std. im Kühlschrank</strong> reifen lassen.`),
+    step(7, 'Formen',
+      `Blech grosszügig mit Olivenöl einölen. Teig vorsichtig aufs Blech gleiten lassen. <strong>30–60 Min.</strong> entspannen, dann mit geölten Fingern in Form drücken.`),
+    step(8, 'Dimpeln &amp; Topping',
+      `Tiefe Mulden mit geölten Fingern eindrücken. Reichlich Olivenöl, grobes Meersalz und optional Rosmarin darüber verteilen.`),
+    step(9, 'Stückgare',
+      `<strong>45–90 Min.</strong> auf dem Blech ruhen lassen bis der Teig sichtbar aufgegangen ist.`),
+    step(10, 'Backen',
+      `Ofen auf <strong>250–270°C Ober-/Unterhitze</strong> vorheizen. Blech auf unterste Schiene. <strong>10–12 Min. volle Hitze</strong>, dann auf <strong>220°C</strong> senken, weitere <strong>8–10 Min.</strong> goldbraun backen.`),
+    step(11, 'Finish',
+      `Nach dem Backen mit etwas Olivenöl beträufeln. <strong>10 Min.</strong> abkühlen, dann schneiden.`),
+  ]);
+
+  // ── PIZZA ──
+  // Vorteig: total = st, davon 20/420 Anstellgut, 200/420 Mehl, 200/420 Wasser
+  const vtStarter = Math.round(st * (20 / 420));
+  const vtMehl    = Math.round(st * (200 / 420));
+  const vtWasser  = Math.round(st * (200 / 420));
+  const htMehl    = Math.round(tM - vtMehl);   // Hauptteig Mehl
+  const htWasser  = Math.round(tW - vtWasser);  // Hauptteig Wasser
+  const pizzaAnz  = Math.round((+tv.value || 650) / 280); // estimated pieces
+  const stProSt   = Math.round((+tv.value || 650) / pizzaAnz);
+  const el_p = document.getElementById('steps-pizza-inner');
+  if (el_p) el_p.innerHTML = stepList([
+    step(1, 'Vorteig – Vortag (8–12 Std.)',
+      `<strong>${vtStarter} g</strong> Anstellgut in warmem Wasser (40°C) aufschlämmen. <strong>${G(vtMehl)}</strong> Mehl Type 00 zugeben, klumpenfrei mischen. Abdecken, <strong>8–12 Std.</strong> bei Raumtemperatur bis zur Verdoppelung.`),
+    step(2, 'Hauptteig',
+      `Vorteig (<strong>${G(st)}</strong>) + <strong>${G(htMehl)}</strong> Mehl + <strong>${G(htWasser)}</strong> Wasser + <strong>${G(sl)}</strong> Salz gut verkneten.`),
+    step(3, 'Stockgare – 1 Std.',
+      `Abdecken, <strong>1 Std.</strong> bei Raumtemperatur. Während dieser Zeit <strong>2× dehnen &amp; falten.</strong>`),
+    step(4, 'Portionieren &amp; Formen',
+      `Teig in <strong>ca. ${pizzaAnz} Stücke</strong> à <strong>ca. ${stProSt} g</strong> teilen. Gleichmässig rund wirken.`),
+    step(5, 'Stückgare',
+      `Teiglinge mit Abstand in Gärbox legen. <strong>1 Std. bei Raumtemperatur</strong> anspringen lassen, dann <strong>12–24 Std. im Kühlschrank</strong> kalt gären.`),
+    step(6, 'Backtag – Vorbereitung',
+      `Tomatensauce zubereiten (San Marzano + Olivenöl + Salz + Basilikum, fein mixen). Backstahl in oberer Ofenhälfte einlegen, auf <strong>max. 280°C Ober-/Unterhitze</strong> vorheizen. Teiglinge <strong>2 Std.</strong> bei Raumtemperatur akklimatisieren.`),
+    step(7, 'Pizza formen &amp; Vorbacken',
+      `Teigling in Hartweizenmehl (Semola) wenden. Mit Fingerkuppen von innen nach aussen drücken – Luft in den Rand schieben. Tomatensauce verteilen. Auf Pizzaschaufel ziehen, auf heissen Backstahl abschieben. <strong>2–3 Min. vorbacken.</strong>`),
+    step(8, 'Belegen &amp; Fertigbacken',
+      `Pizza kurz aus Ofen nehmen. Basilikum, <strong>~5 g Parmesan</strong> reiben, Mozzarella-Streifen auflegen. Rand dünn mit Olivenöl bestreichen. Zurück in Ofen, <strong>3–4 Min.</strong> fertig backen.`),
+  ]);
 }
 
 // ── INIT ──────────────────────────────────────────────────
