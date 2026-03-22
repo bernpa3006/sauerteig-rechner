@@ -24,6 +24,7 @@
   --text:     #2A1505;
   --muted:    #8A6E52;
   --shadow:   0 1px 8px rgba(60,30,0,0.10);
+  --radius:   12px;
   --sat: env(safe-area-inset-top, 0px);
   --sab: env(safe-area-inset-bottom, 0px);
 }
@@ -36,7 +37,6 @@ body {
   min-height: 100vh;
   padding-bottom: calc(68px + var(--sab) + 8px);
 }
-
 /* HEADER */
 header {
   background: var(--brown);
@@ -50,7 +50,6 @@ header {
 .hdr-icon { font-size:1.5rem; line-height:1; }
 header h1 { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; }
 header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-top:0.15rem; }
-
 /* BOTTOM NAV */
 .bnav {
   position:fixed; bottom:0; left:0; right:0;
@@ -70,18 +69,15 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
 }
 .bnav-btn .bi { font-size:1.4rem; line-height:1; }
 .bnav-btn.active { color:var(--amber-lt); }
-
 /* TABS */
 .tc { display:none; }
 .tc.active { display:block; }
-
-/* PAGE WRAPPER */
+/* PAGE */
 .page { max-width:600px; margin:0 auto; padding:0.65rem 0.65rem 0; }
-
 /* CARD */
 .card {
   background:var(--card); border:1px solid var(--border);
-  border-radius:12px; padding:0.9rem 0.9rem;
+  border-radius:var(--radius); padding:0.9rem;
   margin-bottom:0.65rem; box-shadow:var(--shadow);
 }
 .ct {
@@ -90,12 +86,10 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
   border-bottom:2px solid var(--amber-lt);
   display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap;
 }
-
 /* FIELDS */
 .f { display:flex; flex-direction:column; gap:0.28rem; margin-bottom:0.7rem; }
 .f:last-child { margin-bottom:0; }
 .f label { font-size:0.68rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; }
-/* font-size 16px prevents iOS zoom on focus */
 .f input[type="number"] {
   padding:0.65rem 0.85rem; border:1.5px solid var(--border); border-radius:8px;
   background:#FFFDF8; color:var(--text); font-family:'Lora',serif;
@@ -103,10 +97,50 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
 }
 .f input:focus { outline:none; border-color:var(--amber); background:var(--amber-bg); }
 .f .hint { font-size:0.68rem; color:var(--muted); font-style:italic; }
-
 .g2 { display:grid; grid-template-columns:1fr 1fr; gap:0 0.65rem; }
 .g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0 0.5rem; }
 @media(max-width:360px){ .g2,.g3 { grid-template-columns:1fr; } }
+
+/* ── RECIPE SELECTOR ── */
+.recipe-scroll {
+  display:flex; gap:0.55rem; overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none; padding-bottom:0.1rem;
+  margin-bottom:0.75rem;
+}
+.recipe-scroll::-webkit-scrollbar { display:none; }
+.rc {
+  flex-shrink:0; width:130px;
+  border:2px solid var(--border); border-radius:10px;
+  background:#FFFDF8; padding:0.75rem 0.6rem;
+  text-align:center; cursor:pointer;
+  -webkit-tap-highlight-color:transparent; transition:all 0.12s;
+}
+.rc .rc-icon { font-size:1.8rem; display:block; margin-bottom:0.3rem; line-height:1; }
+.rc .rc-name {
+  font-family:'Playfair Display',serif; font-size:0.8rem;
+  font-weight:700; color:var(--brown); display:block;
+  line-height:1.25; margin-bottom:0.18rem;
+}
+.rc .rc-sub { font-size:0.65rem; color:var(--muted); font-style:italic; }
+.rc.active {
+  border-color:var(--amber); background:var(--amber-bg);
+  box-shadow:0 0 0 3px rgba(192,123,42,0.15);
+}
+.rc:not(.active):active { background:var(--amber-bg); }
+
+/* Recipe special note */
+.recipe-note {
+  border-radius:8px; padding:0.6rem 0.8rem;
+  font-size:0.77rem; line-height:1.55; margin-bottom:0.7rem;
+  display:none;
+}
+.recipe-note.show { display:block; }
+.recipe-note.note-amber { background:var(--amber-bg); border:1.5px solid var(--amber-lt); color:#5A3500; }
+.recipe-note.note-green { background:var(--green-bg); border:1.5px solid #A8D4B0; color:#1E4025; }
+.recipe-note.note-blue  { background:#EDF3FF; border:1.5px solid #A8C4F5; color:#1A3870; }
+.recipe-note.note-red   { background:#FDF0EE; border:1.5px solid #E8B0AA; color:#6B1A14; }
+.recipe-note strong { font-weight:700; }
 
 /* BIG TEIGMENGE */
 .teig-big {
@@ -128,7 +162,6 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
   -webkit-tap-highlight-color:transparent; user-select:none;
 }
 .sbt:active { background:var(--amber-bg); }
-
 /* PILLS */
 .pills { display:flex; gap:0.3rem; flex-wrap:wrap; margin:0.25rem 0 0.5rem; }
 .pill {
@@ -139,16 +172,11 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
 }
 .pill.active { background:var(--amber); color:#fff; border-color:var(--amber); font-weight:600; }
 .pill:not(.active):active { background:var(--amber-bg); }
-
 /* MEHLMISCHUNG */
 .mh { display:grid; grid-template-columns:1fr 68px 68px; gap:0 0.4rem; margin-bottom:0.25rem; }
 .mh span { font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
 .mh span:not(:first-child) { text-align:right; }
-.mi {
-  display:grid; grid-template-columns:1fr 68px 68px;
-  align-items:center; gap:0 0.4rem; padding:0.48rem 0;
-  border-bottom:1px solid #EFE5D0;
-}
+.mi { display:grid; grid-template-columns:1fr 68px 68px; align-items:center; gap:0 0.4rem; padding:0.48rem 0; border-bottom:1px solid #EFE5D0; }
 .mi:last-of-type { border-bottom:none; }
 .mn { font-size:0.83rem; line-height:1.3; }
 .mi input[type="number"] {
@@ -162,7 +190,6 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
 .sbadge { padding:0.28rem 0.7rem; border-radius:16px; font-size:0.8rem; font-weight:700; }
 .sok  { background:var(--green-bg); color:var(--green); }
 .sbad { background:var(--red-bg);   color:var(--red); }
-
 /* RESULT LIST */
 .rshead { background:var(--amber-bg); color:var(--amber); font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; padding:0.25rem 0.45rem; border-radius:4px; margin:0.35rem 0 0.1rem; }
 .rl { list-style:none; }
@@ -175,7 +202,6 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
 .rl li.sub .rv { font-size:0.85rem; color:var(--muted); font-weight:400; }
 .rtot { display:flex; justify-content:space-between; align-items:center; background:var(--brown); color:var(--amber-lt); border-radius:8px; padding:0.7rem 0.9rem; margin-top:0.45rem; font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; }
 .pb { display:inline-block; background:#EEE4CF; color:var(--muted); border-radius:10px; padding:0.03rem 0.4rem; font-size:0.67rem; margin-left:0.2rem; }
-
 /* TEMP */
 .tgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.45rem; margin-top:0.7rem; }
 @media(min-width:480px){ .tgrid { grid-template-columns:repeat(4,1fr); } }
@@ -188,7 +214,6 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
 .tu { font-size:0.9rem; font-weight:400; }
 .tn { font-size:0.65rem; color:var(--muted); font-style:italic; margin-top:0.18rem; display:block; }
 .tc-card.act .tn { color:rgba(255,255,255,0.65); }
-
 /* PREP CARDS */
 .pc-wrap { display:grid; grid-template-columns:repeat(3,1fr); gap:0.4rem; margin:0.4rem 0 0.3rem; }
 @media(max-width:340px){ .pc-wrap { grid-template-columns:1fr 1fr; } }
@@ -199,17 +224,15 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
 .pc.pct { grid-column:1/-1; background:var(--green-bg); border-color:#A8D4B0; }
 .pc.pct .pcl { color:var(--green); }
 .pc.pct .pcv { color:var(--green); }
-.rv { display:flex; gap:0.35rem; flex-wrap:wrap; background:#F4F2EE; border:1px dashed var(--border); border-radius:8px; padding:0.45rem 0.6rem; margin:0.35rem 0; font-size:0.75rem; color:var(--muted); align-items:center; }
-.rv .ri { white-space:nowrap; }
-.rv .riv { font-weight:700; color:var(--text); }
-
+.rva { display:flex; gap:0.35rem; flex-wrap:wrap; background:#F4F2EE; border:1px dashed var(--border); border-radius:8px; padding:0.45rem 0.6rem; margin:0.35rem 0; font-size:0.75rem; color:var(--muted); align-items:center; }
+.ri { white-space:nowrap; }
+.riv { font-weight:700; color:var(--text); }
 /* STOCKGARE */
 .sg { display:grid; grid-template-columns:repeat(4,1fr); gap:0.4rem; margin-top:0.3rem; }
 @media(max-width:360px){ .sg { grid-template-columns:1fr 1fr; } }
 .sgc { background:var(--green-bg); border:1px solid #A8D4B0; border-radius:8px; padding:0.6rem 0.35rem; text-align:center; }
 .sgt { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; color:var(--green); }
 .sgd { font-size:0.68rem; color:var(--green); font-weight:600; margin-top:0.1rem; }
-
 /* BOXES */
 .inote { background:#EDF3FF; border-left:3px solid #5B8DD9; padding:0.55rem 0.75rem; border-radius:0 6px 6px 0; font-size:0.76rem; color:#2B4D8A; margin-top:0.55rem; line-height:1.5; }
 .warn  { background:#FFF7E0; border:1.5px solid #DDB040; border-radius:8px; padding:0.65rem 0.8rem; font-size:0.78rem; color:#5C3F00; margin-top:0.6rem; line-height:1.5; display:none; }
@@ -217,7 +240,6 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
 .rbadge { display:inline-flex; background:var(--amber-bg); border:1.5px solid var(--amber-lt); border-radius:16px; padding:0.18rem 0.65rem; font-size:0.68rem; color:var(--amber); font-weight:700; font-family:'Lora',serif; }
 .sep { text-align:center; margin:0.2rem 0; font-family:'Playfair Display',serif; font-style:italic; color:var(--amber); font-size:0.88rem; display:flex; align-items:center; gap:0.4rem; }
 .sep::before,.sep::after { content:''; flex:1; height:1px; background:var(--amber-lt); }
-
 /* AUFFRISCHEN */
 .mcards { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-bottom:0.9rem; }
 .mc { border:2px solid var(--border); border-radius:10px; background:#FFFDF8; padding:0.75rem 0.6rem; text-align:center; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:all 0.12s; }
@@ -225,13 +247,11 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
 .mc .mct { font-family:'Playfair Display',serif; font-size:0.85rem; font-weight:700; color:var(--brown); display:block; line-height:1.2; margin-bottom:0.18rem; }
 .mc .mcr { font-size:0.68rem; color:var(--muted); font-style:italic; }
 .mc.active { border-color:var(--amber); background:var(--amber-bg); box-shadow:0 0 0 3px rgba(192,123,42,0.12); }
-
 .afw { display:flex; align-items:stretch; border:2px solid var(--amber); border-radius:10px; overflow:hidden; margin-bottom:0.9rem; background:var(--amber-bg); }
 .afm,.afp { width:50px; background:var(--amber); color:#fff; font-size:1.5rem; font-weight:700; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; -webkit-tap-highlight-color:transparent; user-select:none; flex-shrink:0; }
 .afm:active,.afp:active { opacity:0.7; }
 .afw input[type="number"] { flex:1; border:none; background:transparent; font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--brown); text-align:center; -webkit-appearance:none; min-width:0; }
 .afw input:focus { outline:none; }
-
 .afb { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.4rem; margin-bottom:0.45rem; }
 .ab { background:var(--card); border:1.5px solid var(--border); border-radius:10px; padding:0.7rem 0.4rem; text-align:center; }
 .abl { font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); display:block; margin-bottom:0.2rem; }
@@ -240,7 +260,6 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
 .aftot { display:flex; justify-content:space-between; align-items:center; background:var(--brown); color:var(--amber-lt); border-radius:10px; padding:0.8rem 1rem; font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; margin-bottom:0.45rem; }
 .afinfo { background:var(--green-bg); border:1.5px solid #A8D4B0; border-radius:8px; padding:0.7rem 0.85rem; font-size:0.78rem; color:var(--green); line-height:1.6; }
 .afinfo strong { display:block; margin-bottom:0.18rem; }
-
 @media(min-width:601px){
   header { position:static; padding:1rem 1.5rem; }
   header h1 { font-size:1.5rem; }
@@ -255,18 +274,91 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
     <span class="hdr-icon">🌾</span>
     <div>
       <h1>Sauerteig Rechner</h1>
-      <p>COPAIN Workshop 2025</p>
+      <p>Sauerteig Rezept Rechner</p>
     </div>
   </div>
 </header>
 
-<!-- ════════════════════════ TAB BROT ══ -->
+<!-- ════════════ TAB BROT ══ -->
 <div class="tc active" id="tab-brot">
 <div class="page">
 
+  <!-- REZEPT AUSWAHL -->
+  <div class="card">
+    <div class="ct">📖 Rezept wählen</div>
+    <div class="recipe-scroll" id="recipe-bar">
+      <div class="rc active" data-recipe="copain">
+        <span class="rc-icon">🍞</span>
+        <span class="rc-name">Copain</span>
+        <span class="rc-sub">650 g · 69% Hydration</span>
+      </div>
+      <div class="rc" data-recipe="anfaenger">
+        <span class="rc-icon">🌾</span>
+        <span class="rc-name">Einfaches Brot</span>
+        <span class="rc-sub">650 g · 65% Hydration</span>
+      </div>
+      <div class="rc" data-recipe="focaccia">
+        <span class="rc-icon">🫓</span>
+        <span class="rc-name">Focaccia</span>
+        <span class="rc-sub">695 g · 86% Hydration</span>
+      </div>
+      <div class="rc" data-recipe="pizza">
+        <span class="rc-icon">🍕</span>
+        <span class="rc-name">Pizza (6 Stk.)</span>
+        <span class="rc-sub">2167 g · 72% Hydration</span>
+      </div>
+    </div>
+
+    <!-- Per-recipe notes -->
+    <div class="recipe-note note-amber show" id="note-copain">
+      <strong>🍞 Copain</strong>
+      Weizen Halbweiss 85% + Vollkorn 15%. Stockgare bei 26°C ca. 4–4.5 Std. Sauerteig: Sommer 15% / Winter 20%.
+      <div style="margin-top:0.5rem;padding-top:0.45rem;border-top:1px solid rgba(192,123,42,0.25);">
+        <span style="font-weight:700;">🎯 Empfehlung Teigling:</span><br>
+        • <strong>Kleiner Laib</strong> (500–600 g gebacken) → <strong>700–800 g Teig</strong><br>
+        • <strong>Normaler Laib</strong> (700–800 g gebacken) → <strong>900–1000 g Teig</strong><br>
+        • <strong>Grosser Laib</strong> (900–1100 g gebacken) → <strong>1100–1300 g Teig</strong><br>
+        <span style="font-size:0.7rem;color:var(--muted);">Das Brot verliert beim Backen ca. 15–20% Gewicht (Wasserverdunstung).</span>
+      </div>
+    </div>
+    <div class="recipe-note note-green" id="note-anfaenger">
+      <strong>🌾 Einfaches Brot</strong>
+      100% Weizen Weiss (Type 550). <strong>Teigtemp.: 25°C.</strong> Falten alle 45 Min. (3×), dann Stückgare 30–60 Min. Backen: 250°C 30 Min. mit Dampf, dann 210°C 20–25 Min.
+      <div style="margin-top:0.5rem;padding-top:0.45rem;border-top:1px solid rgba(46,92,56,0.2);">
+        <span style="font-weight:700;">🎯 Empfehlung Teigling:</span><br>
+        • <strong>Kleiner Laib</strong> (500–600 g gebacken) → <strong>650–750 g Teig</strong><br>
+        • <strong>Normaler Laib</strong> (700–800 g gebacken) → <strong>850–950 g Teig</strong><br>
+        • <strong>Kastenform (30 cm)</strong> → <strong>800–900 g Teig</strong><br>
+        <span style="font-size:0.7rem;color:var(--muted);">Das Brot verliert beim Backen ca. 15–20% Gewicht (Wasserverdunstung).</span>
+      </div>
+    </div>
+    <div class="recipe-note note-blue" id="note-focaccia">
+      <strong>🫓 Focaccia</strong>
+      Hohe Hydration (86%) – Teig ist sehr weich! <strong>Zusätzlich: 13 g Olivenöl</strong> in den Teig. Autolyse 30–45 Min. Stockgare 3–4 Std. Dehnen &amp; Falten alle 30 Min. (4×). Empfohlen: 12–24 Std. Kaltgare. Backen: 250–270°C, 10–12 Min. volle Hitze, dann 220°C 8–10 Min.
+      <div style="margin-top:0.5rem;padding-top:0.45rem;border-top:1px solid rgba(91,141,217,0.25);">
+        <span style="font-weight:700;">🎯 Empfehlung pro Blech:</span><br>
+        • <strong>Kleines Blech</strong> (20×30 cm) → <strong>500–600 g Teig</strong><br>
+        • <strong>Normales Blech</strong> (30×40 cm) → <strong>700–800 g Teig</strong><br>
+        • <strong>Grosses Blech</strong> (40×60 cm) → <strong>1000–1200 g Teig</strong><br>
+        <span style="font-size:0.7rem;color:var(--muted);">Ca. 1 cm Teigdicke vor dem Backen anstreben.</span>
+      </div>
+    </div>
+    <div class="recipe-note note-red" id="note-pizza">
+      <strong>🍕 Pizza</strong>
+      Der "Sauerteig" ist hier der <strong>Vorteig</strong> (420 g = 200 g Mehl + 200 g Wasser + 20 g Anstellgut, 8–12 Std. Reifezeit). Hauptteig + 1 Std. Stockgare, 2× dehnen &amp; falten. Portionieren, 1 Std. anspringen, dann <strong>12–24 Std. Kaltgare.</strong> 2 Std. vor dem Backen rausnehmen. Backen: 280°C auf Backstahl, 2–3 Min. vorbacken, belegen, 3–4 Min. fertig.
+      <div style="margin-top:0.5rem;padding-top:0.45rem;border-top:1px solid rgba(155,35,24,0.2);">
+        <span style="font-weight:700;">🎯 Empfehlung pro Teigling:</span><br>
+        • <strong>Dünn (napoletanisch, Ø 28–30 cm)</strong> → <strong>230–260 g</strong><br>
+        • <strong>Normal (Ø 28–32 cm)</strong> → <strong>260–300 g</strong><br>
+        • <strong>Dick / Pan Pizza</strong> → <strong>320–400 g</strong><br>
+        <span style="font-size:0.7rem;color:var(--muted);">Teigmenge oben anpassen: z.B. 6 × 280 g = 1680 g eingeben.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grundeinstellungen -->
   <div class="card">
     <div class="ct">⚙️ Grundeinstellungen</div>
-
     <div class="f">
       <label>Teigmenge</label>
       <div class="teig-big">
@@ -278,7 +370,6 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
         <span class="teig-unit">g</span>
       </div>
     </div>
-
     <div class="f">
       <label>Sauerteig Anteil</label>
       <div class="pills" id="spills">
@@ -286,18 +377,17 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
         <button class="pill active" data-p="19">Standard 19%</button>
         <button class="pill" data-p="20">Winter 20%</button>
       </div>
-      <input type="number" id="sp" inputmode="decimal" min="5" max="40" step="0.5" value="19">
+      <input type="number" id="sp" inputmode="decimal" min="5" max="100" step="0.5" value="19">
       <span class="hint">% des Gesamtmehls</span>
     </div>
-
     <div class="g2">
       <div class="f">
         <label>Hydration / Wasser (%)</label>
-        <input type="number" id="wp" inputmode="decimal" min="50" max="100" step="0.5" value="69">
+        <input type="number" id="wp" inputmode="decimal" min="40" max="120" step="0.5" value="69">
       </div>
       <div class="f">
         <label>Salz (%)</label>
-        <input type="number" id="slp" inputmode="decimal" min="1" max="5" step="0.1" value="2.5">
+        <input type="number" id="slp" inputmode="decimal" min="0.5" max="5" step="0.1" value="2.5">
       </div>
       <div class="f">
         <label>Bassinage (%)</label>
@@ -310,11 +400,9 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
   <!-- Mehlmischung -->
   <div class="card">
     <div class="ct">⚖️ Mehlmischung</div>
-    <div class="mh">
-      <span>Mehlsorte</span><span>%</span><span>Gramm</span>
-    </div>
-    <div class="mi"><span class="mn">Weizen Weiss</span><input type="number" class="mp" data-m="weiss" inputmode="numeric" min="0" max="100" step="1" value="0"><span class="mg" id="gw">0 g</span></div>
-    <div class="mi"><span class="mn">Weizen Halbweiss</span><input type="number" class="mp" data-m="halbweiss" inputmode="numeric" min="0" max="100" step="1" value="85"><span class="mg" id="ghw">–</span></div>
+    <div class="mh"><span>Mehlsorte</span><span>%</span><span>Gramm</span></div>
+    <div class="mi"><span class="mn">Weizen Weiss / Type 00</span><input type="number" class="mp" data-m="weiss" inputmode="numeric" min="0" max="100" step="1" value="0"><span class="mg" id="gw">0 g</span></div>
+    <div class="mi"><span class="mn">Weizen Halbweiss (720)</span><input type="number" class="mp" data-m="halbweiss" inputmode="numeric" min="0" max="100" step="1" value="85"><span class="mg" id="ghw">–</span></div>
     <div class="mi"><span class="mn">Weizen Vollkorn</span><input type="number" class="mp" data-m="vollkorn" inputmode="numeric" min="0" max="100" step="1" value="15"><span class="mg" id="gvk">–</span></div>
     <div class="mi"><span class="mn">Roggen Vollkorn</span><input type="number" class="mp" data-m="roggen" inputmode="numeric" min="0" max="100" step="1" value="0"><span class="mg" id="gr">0 g</span></div>
     <div class="mi"><span class="mn">Dinkel Vollkorn</span><input type="number" class="mp" data-m="dinkel" inputmode="numeric" min="0" max="100" step="1" value="0"><span class="mg" id="gd">0 g</span></div>
@@ -324,7 +412,7 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
     </div>
   </div>
 
-  <!-- Rezept -->
+  <!-- Rezept Übersicht -->
   <div class="card">
     <div class="ct">📋 Rezept Übersicht</div>
     <div id="rl"></div>
@@ -355,11 +443,11 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
 
   <!-- Sauerteig ansetzen -->
   <div class="card">
-    <div class="ct">🫙 Sauerteig ansetzen <span class="rbadge">2 : 10 : 8</span></div>
+    <div class="ct">🫙 Sauerteig / Vorteig ansetzen <span class="rbadge">2 : 10 : 8</span></div>
     <p style="font-size:0.76rem;color:var(--muted);font-style:italic;margin-bottom:0.7rem;line-height:1.5;">Ziel: Verdoppelung — 26°C (Wasser ≈32°C) — ca. <strong>12 Std</strong> warm</p>
     <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:0.28rem;">Benötigte Menge</p>
     <div class="pc-wrap" id="stb"></div>
-    <div class="rv" id="str"></div>
+    <div class="rva" id="str"></div>
     <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--green);margin:0.55rem 0 0.28rem;">Ansetzen (inkl. Reserve +20%)</p>
     <div class="pc-wrap" id="sta"></div>
     <div class="inote">Verhältnis: <strong>2 / 10 / 8</strong> → Anstellgut 10% · Mehl 50% · Wasser 40%</div>
@@ -371,7 +459,7 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
     <p style="font-size:0.76rem;color:var(--muted);font-style:italic;margin-bottom:0.7rem;line-height:1.5;">Ziel: 2.5-fach — 26°C (Wasser ≈32°C) — ca. <strong>10 Std</strong> warm</p>
     <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:0.28rem;">Benötigte Menge</p>
     <div class="pc-wrap" id="agb"></div>
-    <div class="rv" id="agr"></div>
+    <div class="rva" id="agr"></div>
     <p style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--green);margin:0.55rem 0 0.28rem;">Ansetzen (inkl. Reserve +25%)</p>
     <div class="pc-wrap" id="aga"></div>
     <div class="warn" id="minw">
@@ -395,13 +483,11 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
 </div>
 </div>
 
-<!-- ════════════════════════ TAB AUFFRISCHEN ══ -->
+<!-- ════════════ TAB AUFFRISCHEN ══ -->
 <div class="tc" id="tab-auffrischen">
 <div class="page">
-
   <div class="card">
     <div class="ct">🔄 Sauerteig Auffrischen</div>
-
     <div class="mcards">
       <button class="mc active" data-mode="st">
         <span class="mci">🫙</span>
@@ -414,7 +500,6 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
         <span class="mcr">Ratio 2 : 5 : 4</span>
       </button>
     </div>
-
     <div class="f" style="margin-bottom:0.4rem;">
       <label id="afl">Gewünschte Menge Sauerteig (g)</label>
     </div>
@@ -423,14 +508,12 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
       <input type="number" id="afv" inputmode="numeric" min="20" max="9999" step="10" value="200">
       <button class="afp" id="afp">+</button>
     </div>
-
     <div id="afi-st" style="font-size:0.76rem;color:var(--muted);font-style:italic;margin-bottom:0.8rem;line-height:1.5;">
       🎯 Ziel: Verdoppelung — ca. <strong>12 Std</strong> an warmem Ort (≥26°C)
     </div>
     <div id="afi-ag" style="display:none;font-size:0.76rem;color:var(--muted);font-style:italic;margin-bottom:0.8rem;line-height:1.5;">
       🎯 Ziel: 2.5-fach — ca. <strong>10 Std</strong> an warmem Ort (≥26°C)
     </div>
-
     <div class="afb" id="afblocks"></div>
     <div class="aftot" id="aftot"></div>
     <div class="afinfo" id="afinfo"></div>
@@ -438,7 +521,6 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
       <strong>⚠️ Mindestmenge:</strong> Alt. Anstellgut <strong>20 g</strong> · Mehl <strong>50 g</strong> · Wasser <strong>40 g</strong> = <strong>110 g</strong>
     </div>
   </div>
-
 </div>
 </div>
 
@@ -453,11 +535,36 @@ header p  { font-style:italic; color:var(--amber-lt); font-size:0.7rem; margin-t
 </nav>
 
 <script>
-const R10 = x => Math.ceil(x/10)*10;
-const G  = n => Math.round(n)+' g';
-const R1 = n => Math.round(n*10)/10;
+// ── RECIPE PRESETS ─────────────────────────────────────────
+const RECIPES = {
+  copain: {
+    teig: 650, sauerPct: 19, wasserPct: 69, salzPct: 2.5, bassiPct: 5,
+    mehl: { weiss: 0, halbweiss: 85, vollkorn: 15, roggen: 0, dinkel: 0 },
+    sauerPills: true
+  },
+  anfaenger: {
+    teig: 650, sauerPct: 20, wasserPct: 65, salzPct: 2.0, bassiPct: 0,
+    mehl: { weiss: 100, halbweiss: 0, vollkorn: 0, roggen: 0, dinkel: 0 },
+    sauerPills: false
+  },
+  focaccia: {
+    teig: 695, sauerPct: 20, wasserPct: 86, salzPct: 2.4, bassiPct: 0,
+    mehl: { weiss: 0, halbweiss: 90, vollkorn: 10, roggen: 0, dinkel: 0 },
+    sauerPills: false
+  },
+  pizza: {
+    teig: 2167, sauerPct: 42, wasserPct: 72, salzPct: 2.7, bassiPct: 0,
+    mehl: { weiss: 100, halbweiss: 0, vollkorn: 0, roggen: 0, dinkel: 0 },
+    sauerPills: false
+  }
+};
 
-// TABS
+// ── UTILS ─────────────────────────────────────────────────
+const R10 = x => Math.ceil(x/10)*10;
+const G   = n => Math.round(n)+' g';
+const R1  = n => Math.round(n*10)/10;
+
+// ── TABS ──────────────────────────────────────────────────
 document.querySelectorAll('.bnav-btn').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.bnav-btn').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.tc').forEach(x => x.classList.remove('active'));
@@ -465,13 +572,53 @@ document.querySelectorAll('.bnav-btn').forEach(b => b.addEventListener('click', 
   document.getElementById('tab-'+b.dataset.tab).classList.add('active');
 }));
 
-// TEIG STEPPER
+// ── RECIPE SELECTOR ───────────────────────────────────────
+document.querySelectorAll('.rc').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.rc').forEach(x => x.classList.remove('active'));
+    btn.classList.add('active');
+    const rId = btn.dataset.recipe;
+    applyRecipe(rId);
+  });
+});
+
+function applyRecipe(id) {
+  const r = RECIPES[id];
+  if (!r) return;
+
+  // Update notes
+  ['copain','anfaenger','focaccia','pizza'].forEach(k => {
+    document.getElementById('note-'+k).classList.toggle('show', k===id);
+  });
+
+  // Update inputs
+  document.getElementById('tv').value   = r.teig;
+  document.getElementById('sp').value   = r.sauerPct;
+  document.getElementById('wp').value   = r.wasserPct;
+  document.getElementById('slp').value  = r.salzPct;
+  document.getElementById('bp').value   = r.bassiPct;
+
+  // Mehl
+  document.querySelectorAll('.mp').forEach(inp => {
+    inp.value = r.mehl[inp.dataset.m] || 0;
+  });
+
+  // Sauer pills: show only for COPAIN
+  document.querySelectorAll('#spills .pill').forEach(p => {
+    p.classList.remove('active');
+    if (r.sauerPills && p.dataset.p == r.sauerPct) p.classList.add('active');
+  });
+
+  calc();
+}
+
+// ── TEIG STEPPER ──────────────────────────────────────────
 const tv = document.getElementById('tv');
 document.getElementById('tminus').addEventListener('click', () => { tv.value = Math.max(100,(+tv.value||650)-50); calc(); });
 document.getElementById('tplus' ).addEventListener('click', () => { tv.value = Math.min(9999,(+tv.value||650)+50); calc(); });
 tv.addEventListener('input', calc);
 
-// SAUER PILLS
+// ── SAUERTEIG PILLS ───────────────────────────────────────
 document.querySelectorAll('#spills .pill').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('#spills .pill').forEach(x => x.classList.remove('active'));
   b.classList.add('active');
@@ -483,11 +630,11 @@ document.getElementById('sp').addEventListener('input', () => {
   calc();
 });
 
-// OTHER INPUTS
+// ── OTHER INPUTS ──────────────────────────────────────────
 ['wp','slp','bp','gtt','lt','mt'].forEach(id => document.getElementById(id).addEventListener('input', calc));
 document.querySelectorAll('.mp').forEach(i => i.addEventListener('input', calc));
 
-// TEMP PILLS
+// ── TEMP PILLS ────────────────────────────────────────────
 let aTemp = 'hw';
 document.querySelectorAll('#tpills .pill').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('#tpills .pill').forEach(x => x.classList.remove('active'));
@@ -496,136 +643,140 @@ document.querySelectorAll('#tpills .pill').forEach(b => b.addEventListener('clic
   renderTemp();
 }));
 
-// ═════════════════════════════════ MAIN CALC ══
+// ═════════════════════════ MAIN CALC ══════════════════════
 function calc() {
-  const teig   = +tv.value || 650;
-  const sP     = (+document.getElementById('sp' ).value || 19) / 100;
-  const wP     = (+document.getElementById('wp' ).value || 69) / 100;
-  const bP     = (+document.getElementById('bp' ).value ||  5) / 100;
-  const slP    = (+document.getElementById('slp').value ||2.5) / 100;
+  const teig  = +tv.value || 650;
+  const sP    = (+document.getElementById('sp' ).value || 19) / 100;
+  const wP    = (+document.getElementById('wp' ).value || 69) / 100;
+  const bP    = (+document.getElementById('bp' ).value ||  5) / 100;
+  const slP   = (+document.getElementById('slp').value || 2.5) / 100;
 
-  const tM   = R10(teig / (1 + wP + slP + sP));
-  const tW   = tM * wP;
-  const wT   = tW * (1-bP);
-  const wB   = tW * bP;
-  const sl   = tM * slP;
-  const st   = tM * sP;
-  const tot  = tM + tW + sl + st;
+  const tM  = R10(teig / (1 + wP + slP + sP));
+  const tW  = tM * wP;
+  const wT  = tW * (1-bP);
+  const wB  = tW * bP;
+  const sl  = tM * slP;
+  const st  = tM * sP;
+  const tot = tM + tW + sl + st;
 
   // Mehl breakdown
   const mp = {}; let spct = 0;
-  document.querySelectorAll('.mp').forEach(i => { const v = +i.value||0; mp[i.dataset.m]=v/100; spct+=v; });
+  document.querySelectorAll('.mp').forEach(i => { const v=+i.value||0; mp[i.dataset.m]=v/100; spct+=v; });
   const badge = document.getElementById('msb');
   badge.textContent = spct+'%';
   badge.className = 'sbadge '+(spct===100?'sok':'sbad');
   const gids = {weiss:'gw',halbweiss:'ghw',vollkorn:'gvk',roggen:'gr',dinkel:'gd'};
-  Object.keys(gids).forEach(k => { document.getElementById(gids[k]).textContent = tM*(mp[k]||0) > 0 ? G(tM*(mp[k]||0)) : '0 g'; });
+  Object.keys(gids).forEach(k => {
+    document.getElementById(gids[k]).textContent = tM*(mp[k]||0)>0 ? G(tM*(mp[k]||0)) : '0 g';
+  });
 
   // Rezept list
-  const ml = {weiss:'Weizen Weiss',halbweiss:'Weizen Halbweiss',vollkorn:'Weizen Vollkorn',roggen:'Roggen Vollkorn',dinkel:'Dinkel Vollkorn'};
+  const ml = {weiss:'Weizen Weiss / Type 00',halbweiss:'Weizen Halbweiss (720)',vollkorn:'Weizen Vollkorn',roggen:'Roggen Vollkorn',dinkel:'Dinkel Vollkorn'};
   let h='';
   h+=`<div class="rshead">Mehl</div><ul class="rl">`;
   h+=`<li><span class="rn"><strong>Total Mehl</strong></span><span class="rp">100%</span><span class="rv">${G(tM)}</span></li>`;
-  ['weiss','halbweiss','vollkorn','roggen','dinkel'].forEach(k => { if((mp[k]||0)>0) h+=`<li class="sub"><span class="rn">↳ ${ml[k]}</span><span class="rp">${R1((mp[k]||0)*100)}%</span><span class="rv">${G(tM*(mp[k]||0))}</span></li>`; });
+  ['weiss','halbweiss','vollkorn','roggen','dinkel'].forEach(k => {
+    if((mp[k]||0)>0) h+=`<li class="sub"><span class="rn">↳ ${ml[k]}</span><span class="rp">${R1((mp[k]||0)*100)}%</span><span class="rv">${G(tM*(mp[k]||0))}</span></li>`;
+  });
   h+=`</ul><div class="rshead">Wasser</div><ul class="rl">`;
   h+=`<li><span class="rn"><strong>Total Wasser</strong><span class="pb">${R1(wP*100)}%</span></span><span class="rp"></span><span class="rv">${G(tW)}</span></li>`;
-  h+=`<li class="sub"><span class="rn">↳ Wasser Teig</span><span class="rp">${R1((1-bP)*100)}% v.W.</span><span class="rv">${G(wT)}</span></li>`;
-  h+=`<li class="sub"><span class="rn">↳ Bassinage</span><span class="rp">${R1(bP*100)}% v.W.</span><span class="rv">${G(wB)}</span></li>`;
+  if(bP>0){
+    h+=`<li class="sub"><span class="rn">↳ Wasser Teig</span><span class="rp">${R1((1-bP)*100)}% v.W.</span><span class="rv">${G(wT)}</span></li>`;
+    h+=`<li class="sub"><span class="rn">↳ Bassinage</span><span class="rp">${R1(bP*100)}% v.W.</span><span class="rv">${G(wB)}</span></li>`;
+  }
   h+=`</ul><div class="rshead">Weiteres</div><ul class="rl">`;
   h+=`<li><span class="rn"><strong>Salz</strong><span class="pb">${R1(slP*100)}%</span></span><span class="rp"></span><span class="rv">${G(sl)}</span></li>`;
-  h+=`<li><span class="rn"><strong>Sauerteig</strong><span class="pb">${R1(sP*100)}%</span></span><span class="rp"></span><span class="rv">${G(st)}</span></li>`;
+  h+=`<li><span class="rn"><strong>Sauerteig / Vorteig</strong><span class="pb">${R1(sP*100)}%</span></span><span class="rp"></span><span class="rv">${G(st)}</span></li>`;
   h+=`</ul><div class="rtot"><span>TOTAL TEIG</span><span>${G(tot)}</span></div>`;
   document.getElementById('rl').innerHTML = h;
 
   renderTemp();
 
-  // Sauerteig prep (2:10:8 = 10%/50%/40%)
-  const stB = st, stA = stB*1.2, stR = stB*0.2;
-  renderPC('stb', stB*.10, stB*.50, stB*.40, stB, 'Anstellgut');
-  renderRV('str', stR*.10, stR*.50, stR*.40, stR, '+20%');
-  renderPC('sta', stA*.10, stA*.50, stA*.40, stA, 'Anstellgut');
+  // Sauerteig prep (2:10:8)
+  const stB=st, stA=stB*1.2, stR=stB*0.2;
+  renderPC('stb',stB*.10,stB*.50,stB*.40,stB,'Anstellgut');
+  renderRV('str',stR*.10,stR*.50,stR*.40,stR,'+20%');
+  renderPC('sta',stA*.10,stA*.50,stA*.40,stA,'Anstellgut');
 
-  // Starter prep (2:5:4 = 19%/45%/36%)
-  const agB = stA*.10, agA = agB*1.25, agR = agB*0.25;
-  renderPC('agb', agB*.19, agB*.45, agB*.36, agB, 'Alt. Anstellgut');
-  renderRV('agr', agR*.19, agR*.45, agR*.36, agR, '+25%');
-  renderPC('aga', agA*.19, agA*.45, agA*.36, agA, 'Alt. Anstellgut');
-  document.getElementById('minw').classList.toggle('show', agA < 100);
+  // Starter prep (2:5:4)
+  const agB=stA*.10, agA=agB*1.25, agR=agB*0.25;
+  renderPC('agb',agB*.19,agB*.45,agB*.36,agB,'Alt. Anstellgut');
+  renderRV('agr',agR*.19,agR*.45,agR*.36,agR,'+25%');
+  renderPC('aga',agA*.19,agA*.45,agA*.36,agA,'Alt. Anstellgut');
+  document.getElementById('minw').classList.toggle('show',agA<100);
 }
 
-function renderPC(id, s, m, w, tot, slabel) {
-  document.getElementById(id).innerHTML =
-    `<div class="pc"><span class="pcl">${slabel}</span><span class="pcv">${Math.round(s)}<span class="pcu"> g</span></span></div>`+
+function renderPC(id,s,m,w,tot,sl){
+  document.getElementById(id).innerHTML=
+    `<div class="pc"><span class="pcl">${sl}</span><span class="pcv">${Math.round(s)}<span class="pcu"> g</span></span></div>`+
     `<div class="pc"><span class="pcl">Mehl</span><span class="pcv">${Math.round(m)}<span class="pcu"> g</span></span></div>`+
     `<div class="pc"><span class="pcl">Wasser</span><span class="pcv">${Math.round(w)}<span class="pcu"> g</span></span></div>`+
     `<div class="pc pct"><span class="pcl">Total</span><span class="pcv">${Math.round(tot)}<span class="pcu"> g</span></span></div>`;
 }
-function renderRV(id, s, m, w, tot, lbl) {
-  document.getElementById(id).innerHTML =
+function renderRV(id,s,m,w,tot,lbl){
+  document.getElementById(id).innerHTML=
     `<span style="font-weight:700;color:var(--amber);font-size:0.72rem;">Reserve ${lbl}</span>`+
     `<span class="ri">Anstellgut <span class="riv">${Math.round(s)} g</span></span>`+
     `<span class="ri">Mehl <span class="riv">${Math.round(m)} g</span></span>`+
     `<span class="ri">Wasser <span class="riv">${Math.round(w)} g</span></span>`+
     `<span class="ri">Total <span class="riv">${Math.round(tot)} g</span></span>`;
 }
-
-function renderTemp() {
+function renderTemp(){
   const gtt=+document.getElementById('gtt').value||26;
   const lt =+document.getElementById('lt' ).value||20;
   const mt =+document.getElementById('mt' ).value||18;
   const b  = gtt*2-(lt+mt)/2;
-  const td = [
-    {k:'hw', l:'🖐 Hand – Winter',   v:b,     n:'Kein Kneter'},
-    {k:'kw', l:'⚙️ Kneter – Winter', v:b-7,   n:'−7°C Reibung'},
-    {k:'hs', l:'🖐 Hand – Sommer',   v:b-4,   n:'−4°C Hochsommer'},
-    {k:'ks', l:'⚙️ Kneter – Sommer', v:b-4-7, n:'−4°C −7°C'},
+  const td=[
+    {k:'hw',l:'🖐 Hand – Winter',v:b,    n:'Kein Kneter'},
+    {k:'kw',l:'⚙️ Kneter – Winter',v:b-7,  n:'−7°C Reibung'},
+    {k:'hs',l:'🖐 Hand – Sommer',v:b-4,  n:'−4°C Hochsommer'},
+    {k:'ks',l:'⚙️ Kneter – Sommer',v:b-4-7,n:'−4°C −7°C'},
   ];
-  document.getElementById('tr').innerHTML = td.map(t =>
+  document.getElementById('tr').innerHTML=td.map(t=>
     `<div class="tc-card${t.k===aTemp?' act':''}"><span class="tl">${t.l}</span><span class="tv">${R1(t.v)}<span class="tu">°C</span></span><span class="tn">${t.n}</span></div>`
   ).join('');
 }
 
-// AUFFRISCHEN TAB
-let afMode = 'st';
-const afv = document.getElementById('afv');
-
-document.querySelectorAll('.mc').forEach(b => b.addEventListener('click', () => {
-  document.querySelectorAll('.mc').forEach(x => x.classList.remove('active'));
-  b.classList.add('active');
-  afMode = b.dataset.mode;
-  document.getElementById('afi-st').style.display = afMode==='st' ? '' : 'none';
-  document.getElementById('afi-ag').style.display = afMode==='ag' ? '' : 'none';
-  document.getElementById('afl').textContent = afMode==='st' ? 'Gewünschte Menge Sauerteig (g)' : 'Gewünschte Menge Starter / Anstellgut (g)';
+// ── AUFFRISCHEN ───────────────────────────────────────────
+let afMode='st';
+const afv=document.getElementById('afv');
+document.querySelectorAll('.mc').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.mc').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); afMode=b.dataset.mode;
+  document.getElementById('afi-st').style.display=afMode==='st'?'':'none';
+  document.getElementById('afi-ag').style.display=afMode==='ag'?'':'none';
+  document.getElementById('afl').textContent=afMode==='st'?'Gewünschte Menge Sauerteig (g)':'Gewünschte Menge Starter / Anstellgut (g)';
   calcAF();
 }));
-document.getElementById('afm').addEventListener('click', () => { afv.value = Math.max(20,(+afv.value||200)-10); calcAF(); });
-document.getElementById('afp').addEventListener('click', () => { afv.value = Math.min(9999,(+afv.value||200)+10); calcAF(); });
-afv.addEventListener('input', calcAF);
+document.getElementById('afm').addEventListener('click',()=>{afv.value=Math.max(20,(+afv.value||200)-10);calcAF();});
+document.getElementById('afp').addEventListener('click',()=>{afv.value=Math.min(9999,(+afv.value||200)+10);calcAF();});
+afv.addEventListener('input',calcAF);
 
-function calcAF() {
-  const m = +afv.value||200;
+function calcAF(){
+  const m=+afv.value||200;
   let s,me,w,rt,zt,sl;
-  if (afMode==='st') {
-    s=m*.10; me=m*.50; w=m*.40;
+  if(afMode==='st'){
+    s=m*.10;me=m*.50;w=m*.40;
     rt='Verhältnis <strong>2 : 10 : 8</strong> — Anstellgut 10% · Mehl 50% · Wasser 40%';
     zt='Mindestens Verdoppelung — ca. <strong>12 Std</strong> an warmem Ort';
     sl='Anstellgut';
     document.getElementById('afwarn').style.display='none';
   } else {
-    s=m*.19; me=m*.45; w=m*.36;
+    s=m*.19;me=m*.45;w=m*.36;
     rt='Verhältnis <strong>2 : 5 : 4</strong> — Alt. Anstellgut 19% · Mehl 45% · Wasser 36%';
     zt='2.5-fache Steigerung — ca. <strong>10 Std</strong> an warmem Ort';
     sl='Alt. Anstellgut';
-    document.getElementById('afwarn').classList.toggle('show', m<100);
+    document.getElementById('afwarn').classList.toggle('show',m<100);
   }
-  document.getElementById('afblocks').innerHTML =
+  document.getElementById('afblocks').innerHTML=
     `<div class="ab"><span class="abl">${sl}</span><span class="abv">${Math.round(s)}<span class="abu"> g</span></span></div>`+
     `<div class="ab"><span class="abl">Mehl</span><span class="abv">${Math.round(me)}<span class="abu"> g</span></span></div>`+
     `<div class="ab"><span class="abl">Wasser</span><span class="abv">${Math.round(w)}<span class="abu"> g</span></span></div>`;
-  document.getElementById('aftot').innerHTML = `<span>Total</span><span>${Math.round(s+me+w)} g</span>`;
-  document.getElementById('afinfo').innerHTML = `<strong>${rt}</strong>${zt}`;
+  document.getElementById('aftot').innerHTML=`<span>Total</span><span>${Math.round(s+me+w)} g</span>`;
+  document.getElementById('afinfo').innerHTML=`<strong>${rt}</strong>${zt}`;
 }
 
+// ── INIT ──────────────────────────────────────────────────
 calc();
 calcAF();
 </script>
